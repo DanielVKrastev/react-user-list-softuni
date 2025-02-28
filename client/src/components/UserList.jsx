@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import userService from "../services/userService";
 
@@ -8,15 +8,16 @@ import UserListItem from "./UserListItem";
 
 
 export default function UserList() {
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         userService.getAll()
             .then(result => {
-                console.log(result);
+                setUsers(result);
             });
        
     }, []);
-
+    
     return(
         <>
             {/*<!-- Section component  -->*/}
