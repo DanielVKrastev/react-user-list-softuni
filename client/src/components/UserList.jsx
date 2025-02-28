@@ -12,7 +12,7 @@ import UserInfo from "./UserInfo";
 export default function UserList() {
     const [users, setUsers] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
-    const [userIdInfo, setUserIdInfo] = useState(); // undefiend
+    const [userIdInfo, setUserIdInfo] = useState(null); // or undefiend
 
     useEffect(() => {
         userService.getAll()
@@ -49,6 +49,10 @@ export default function UserList() {
         setUserIdInfo(userId);
     };
 
+    const userInfoCloseHandler = () => {
+        setUserIdInfo(null);
+    };
+
     return(
         <>
             {/*<!-- Section component  -->*/}
@@ -64,6 +68,7 @@ export default function UserList() {
         {userIdInfo && 
             <UserInfo 
                 userId={userIdInfo}
+                onClose={userInfoCloseHandler}
             /> }
 
         {/*<!-- Table component -->*/}
