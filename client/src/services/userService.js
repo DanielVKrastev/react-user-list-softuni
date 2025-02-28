@@ -8,7 +8,7 @@ export default {
 
         return users;
     },
-    async getOne(userId){
+    async getOne(userId) {
         const response = await fetch(`${baseUrl}/${userId}`);
         const user = await response.json();
         return user;
@@ -31,6 +31,13 @@ export default {
         const result = await response.json();
 
         return result;
+    },
+    async delete(userId) {
+        const response = await fetch(`${baseUrl}/${userId}`, {
+            method: 'DELETE',
+        });
+        const result = await response.json();
 
+        return result;
     }
 };

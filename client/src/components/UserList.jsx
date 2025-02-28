@@ -7,12 +7,14 @@ import Search from "./Search";
 import UserListItem from "./UserListItem";
 import UserCreate from "./UserCreate";
 import UserInfo from "./UserInfo";
+import UserDelete from "./UserDelete";
 
 
 export default function UserList() {
     const [users, setUsers] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
     const [userIdInfo, setUserIdInfo] = useState(null); // or undefiend
+    const [userIdDelete, setUserIdDelete] = useState(null);
 
     useEffect(() => {
         userService.getAll()
@@ -53,6 +55,25 @@ export default function UserList() {
         setUserIdInfo(null);
     };
 
+    const userDeleteClickHandler = (userId) => {
+        setUserIdDelete(userId);
+    };
+
+    const userDeleteCloseHandler = () => {
+        setUserIdDelete(null);
+    };
+
+    const userDeleteHandler = async () => {
+        // DELETE request to server
+        await userService.delete(userIdDelete);
+
+        // Delete from locale state
+        setUsers(state => state.filter(user => user._id !== userIdDelete));
+
+        // finally close modal
+        setUserIdDelete(null);
+    };
+
     return(
         <>
             {/*<!-- Section component  -->*/}
@@ -63,12 +84,18 @@ export default function UserList() {
             <UserCreate 
                 onClose={closeCreateUserClickHandler}
                 onSave={saveCreateUserClickHandler}
-            />}
+            /> }
 
         {userIdInfo && 
             <UserInfo 
                 userId={userIdInfo}
                 onClose={userInfoCloseHandler}
+            /> }
+
+        {userIdDelete &&
+            <UserDelete 
+                onClose={userDeleteCloseHandler}
+                onDelete={userDeleteHandler}
             /> }
 
         {/*<!-- Table component -->*/}
@@ -185,6 +212,7 @@ export default function UserList() {
                 <UserListItem 
                     key={user._id} 
                     onInfoClick={userInfoClickHandler}
+                    onDeleteClick={userDeleteClickHandler}
                     {...user} 
                 />)}
                 
