@@ -56,15 +56,15 @@ export default function UserList() {
         <Search />
 
         {showCreate && 
-        <UserCreate 
-            onClose={closeCreateUserClickHandler}
-            onSave={saveCreateUserClickHandler}
-        />}
+            <UserCreate 
+                onClose={closeCreateUserClickHandler}
+                onSave={saveCreateUserClickHandler}
+            />}
 
         {userIdInfo && 
-        <UserInfo 
-            userId={userIdInfo}
-        /> }
+            <UserInfo 
+                userId={userIdInfo}
+            /> }
 
         {/*<!-- Table component -->*/}
         <div className="table-wrapper">
