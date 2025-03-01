@@ -17,6 +17,7 @@ export default function UserList() {
     const [userIdInfo, setUserIdInfo] = useState(null); // or undefiend
     const [userIdDelete, setUserIdDelete] = useState(null);
     const [searchParams, setSearchParams] = useState([]);
+    const [sorting, setSorting] = useState({sortName: 'createdAt', sort: 'ASC'});
 
     useEffect(() => {
         userService.getAll()
@@ -47,7 +48,7 @@ export default function UserList() {
                 setUsers(findUser);
             });
 
-    }, [searchParams])
+    }, [searchParams, sorting])
 
     const createUserClickHandler = () => {
         setShowCreate(true);
@@ -130,6 +131,32 @@ export default function UserList() {
 
         setSearchParams({search, criteria});
     };
+
+    const sortingUsersHandler = (e) => {
+        let sortName = '';
+        if(e.target.innerText === 'First name'){
+            sortName = 'firstName';
+        }else if(e.target.innerText === 'Last name'){
+            sortName = 'lastName';
+        }else if(e.target.innerText === 'Email'){
+            sortName = 'email';
+        }else if(e.target.innerText === 'Phone'){
+            sortName = 'phoneNumber';
+        }else if(e.target.innerText === 'Created'){
+            sortName = 'createdAt';
+        }
+
+        if(sorting.sortName === sortName){
+            sorting.sort === 'ASC' ? 
+            setSorting({sortName: sortName, sort: 'DESC'})
+            : setSorting({sortName: sortName, sort: 'ASC'});
+        }else{
+            setSorting({sortName: sortName, sort: 'ASC'});
+        }
+    };
+
+    console.log(sorting);
+    
 
     return(
         <>
@@ -219,50 +246,95 @@ export default function UserList() {
                 <th>
                     Image
                 </th>
-                <th>
-                    First name<svg aria-hidden="true" focusable="false" data-prefix="fas"
-                    data-icon="arrow-down" className="icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" role="img"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path fill="currentColor"
-                        d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z">
-                    </path>
+                <th onClick={sortingUsersHandler}>
+                    First name
+                    <svg aria-hidden="true" focusable="false" data-prefix="fas"
+                    data-icon="arrow-down" className={sorting.sortName === 'firstName'? 
+                                                                "icon active-icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" 
+                                                                : "icon svg-inline--fa fa-arrow-down Table_icon__+HHgn"
+                    } role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    {sorting.sort === 'ASC' ?
+                                <path fill="currentColor"
+                                    d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"
+                                />
+                                :
+                                <path fill="currentColor"
+                                    d="M192 32c-10 0-20 4-27.3 11.3l-136 136c-15.6 15.6-15.6 40.9 0 56.6s40.9 15.6 56.6 0L160 142.6V456c0 22.1 17.9 40 40 40s40-17.9 40-40V142.6l74.7 74.7c15.6 15.6 40.9 15.6 56.6 0s15.6-40.9 0-56.6l-136-136C212 36 202 32 192 32z"
+                                />
+                    }
+
                     </svg>
                 </th>
-                <th>
-                    Last name<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-down"
-                    className="icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" role="img" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 384 512">
-                    <path fill="currentColor"
-                        d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z">
-                    </path>
+                <th onClick={sortingUsersHandler}>
+                    Last name
+                    <svg aria-hidden="true" focusable="false" data-prefix="fas"
+                    data-icon="arrow-down" className={sorting.sortName === 'lastName'? 
+                                                                "icon active-icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" 
+                                                                : "icon svg-inline--fa fa-arrow-down Table_icon__+HHgn"
+                    } role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    {sorting.sort === 'ASC' ?
+                                <path fill="currentColor"
+                                    d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"
+                                />
+                                :
+                                <path fill="currentColor"
+                                    d="M192 32c-10 0-20 4-27.3 11.3l-136 136c-15.6 15.6-15.6 40.9 0 56.6s40.9 15.6 56.6 0L160 142.6V456c0 22.1 17.9 40 40 40s40-17.9 40-40V142.6l74.7 74.7c15.6 15.6 40.9 15.6 56.6 0s15.6-40.9 0-56.6l-136-136C212 36 202 32 192 32z"
+                                />
+                    }
                     </svg>
                 </th>
-                <th>
-                    Email<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-down"
-                    className="icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" role="img" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 384 512">
-                    <path fill="currentColor"
-                        d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z">
-                    </path>
+                <th onClick={sortingUsersHandler}>
+                    Email
+                    <svg aria-hidden="true" focusable="false" data-prefix="fas"
+                    data-icon="arrow-down" className={sorting.sortName === 'email'? 
+                                                                "icon active-icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" 
+                                                                : "icon svg-inline--fa fa-arrow-down Table_icon__+HHgn"
+                    } role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    {sorting.sort === 'ASC' ?
+                                <path fill="currentColor"
+                                    d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"
+                                />
+                                :
+                                <path fill="currentColor"
+                                    d="M192 32c-10 0-20 4-27.3 11.3l-136 136c-15.6 15.6-15.6 40.9 0 56.6s40.9 15.6 56.6 0L160 142.6V456c0 22.1 17.9 40 40 40s40-17.9 40-40V142.6l74.7 74.7c15.6 15.6 40.9 15.6 56.6 0s15.6-40.9 0-56.6l-136-136C212 36 202 32 192 32z"
+                                />
+                    }
                     </svg>
                 </th>
-                <th>
-                    Phone<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-down"
-                    className="icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" role="img" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 384 512">
-                    <path fill="currentColor"
-                        d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z">
-                    </path>
+                <th onClick={sortingUsersHandler}>
+                    Phone
+                    <svg aria-hidden="true" focusable="false" data-prefix="fas"
+                    data-icon="arrow-down" className={sorting.sortName === 'phoneNumber'? 
+                                                                "icon active-icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" 
+                                                                : "icon svg-inline--fa fa-arrow-down Table_icon__+HHgn"
+                    } role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    {sorting.sort === 'ASC' ?
+                                <path fill="currentColor"
+                                    d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"
+                                />
+                                :
+                                <path fill="currentColor"
+                                    d="M192 32c-10 0-20 4-27.3 11.3l-136 136c-15.6 15.6-15.6 40.9 0 56.6s40.9 15.6 56.6 0L160 142.6V456c0 22.1 17.9 40 40 40s40-17.9 40-40V142.6l74.7 74.7c15.6 15.6 40.9 15.6 56.6 0s15.6-40.9 0-56.6l-136-136C212 36 202 32 192 32z"
+                                />
+                    }
                     </svg>
                 </th>
-                <th>
+                <th onClick={sortingUsersHandler}>
                     Created
                     <svg aria-hidden="true" focusable="false" data-prefix="fas"
-                    data-icon="arrow-down" className="icon active-icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" role="img"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path fill="currentColor"
-                        d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z">
-                    </path>
+                    data-icon="arrow-down" className={sorting.sortName === 'createdAt'? 
+                                                                "icon active-icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" 
+                                                                : "icon svg-inline--fa fa-arrow-down Table_icon__+HHgn"
+                    } role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    {sorting.sort === 'ASC' ?
+                                <path fill="currentColor"
+                                    d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"
+                                />
+                                :
+                                <path fill="currentColor"
+                                    d="M192 32c-10 0-20 4-27.3 11.3l-136 136c-15.6 15.6-15.6 40.9 0 56.6s40.9 15.6 56.6 0L160 142.6V456c0 22.1 17.9 40 40 40s40-17.9 40-40V142.6l74.7 74.7c15.6 15.6 40.9 15.6 56.6 0s15.6-40.9 0-56.6l-136-136C212 36 202 32 192 32z"
+                                />
+                    }
                     </svg>
                 </th>
                 <th>Actions</th>
