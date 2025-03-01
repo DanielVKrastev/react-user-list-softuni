@@ -13,6 +13,7 @@ import UserDelete from "./UserDelete";
 export default function UserList() {
     const [users, setUsers] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
+    const [editUserId, setEditUserId] = useState(null);
     const [userIdInfo, setUserIdInfo] = useState(null); // or undefiend
     const [userIdDelete, setUserIdDelete] = useState(null);
 
@@ -29,6 +30,7 @@ export default function UserList() {
 
     const closeCreateUserClickHandler = () => {
         setShowCreate(false);
+        setEditUserId(null);
     };
 
     const saveCreateUserClickHandler = async (e) => {
@@ -75,12 +77,25 @@ export default function UserList() {
     };
 
     const userEditClickHandler = (userId) => {
-        setShowCreate(userId);
+        setShowCreate(true);
+        setEditUserId(userId);
     };
 
-    const editUserClickHandler = () => {
-        console.log('edit user');
-    }
+    const saveEditUserClickHandler = async (e) => {
+        e.preventDefault();
+        const userId = editUserId;
+        
+        const formData = new FormData(e.target);
+        const userData = Object.fromEntries(formData);
+
+        // update user on server
+        const updatedUser = await userService.update(userId, userData);
+
+        // update local
+        setUsers(state => state.map(user => user._id === userId ? updatedUser : user));
+
+        setShowCreate(false);
+    };
 
     return(
         <>
@@ -90,10 +105,10 @@ export default function UserList() {
 
         {showCreate && 
             <UserCreate 
-                userId={showCreate}
+                userId={editUserId}
                 onClose={closeCreateUserClickHandler}
                 onSave={saveCreateUserClickHandler}
-                onEdit={editUserClickHandler}
+                onEdit={saveEditUserClickHandler}
             /> }
 
         {userIdInfo && 
