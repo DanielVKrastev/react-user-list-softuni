@@ -1,7 +1,11 @@
 export default function UserCreate({
+    userId,
     onClose,
-    onSave
+    onSave,
+    onEdit
 }) {
+  console.log(userId);
+  
     return (
         <>
             {/*<!-- Create/Edit Form component  -->*/}

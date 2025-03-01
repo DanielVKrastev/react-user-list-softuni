@@ -74,6 +74,14 @@ export default function UserList() {
         setUserIdDelete(null);
     };
 
+    const userEditClickHandler = (userId) => {
+        setShowCreate(userId);
+    };
+
+    const editUserClickHandler = () => {
+        console.log('edit user');
+    }
+
     return(
         <>
             {/*<!-- Section component  -->*/}
@@ -82,8 +90,10 @@ export default function UserList() {
 
         {showCreate && 
             <UserCreate 
+                userId={showCreate}
                 onClose={closeCreateUserClickHandler}
                 onSave={saveCreateUserClickHandler}
+                onEdit={editUserClickHandler}
             /> }
 
         {userIdInfo && 
@@ -213,6 +223,7 @@ export default function UserList() {
                     key={user._id} 
                     onInfoClick={userInfoClickHandler}
                     onDeleteClick={userDeleteClickHandler}
+                    onEditClick={userEditClickHandler}
                     {...user} 
                 />)}
                 
