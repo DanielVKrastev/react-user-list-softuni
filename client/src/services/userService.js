@@ -34,7 +34,6 @@ export default {
 
         const user = await this.getOne(userId);
         const createdAt = user.createdAt;
-        console.log(createdAt);
         
         updateData.createdAt = createdAt;
 
