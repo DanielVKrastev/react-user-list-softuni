@@ -1,8 +1,24 @@
-export default function Search() {
+import { useState } from "react";
+
+export default function Search({
+    onSearch
+}) {
+    const [searchInput, setSearchInput] = useState('');
+
+    const changeSearchInputHandler = (e) => {
+        setSearchInput(e.target.value);        
+    };
+
+    const clearSearchInput = () => {
+        const searchInput = document.querySelector('.search-input-container input');
+        setSearchInput('');
+        searchInput.value = '';
+    };
+    
     return(
         <>
               {/*<!-- Search bar component -->*/}
-                <form className="search-form">
+                <form className="search-form" onSubmit={onSearch}>
                     <h2>
                     <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user"
                         className="svg-inline--fa fa-user SearchBar_icon__cXpTg" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -14,11 +30,13 @@ export default function Search() {
                     <span>Users</span>
                     </h2>
                     <div className="search-input-container">
-                    <input type="text" placeholder="Please, select the search criteria" name="search" />
+                    <input type="text" placeholder="Please, select the search criteria" name="search" onChange={changeSearchInputHandler}/>
                     {/*<!-- Show the clear button only if input field length !== 0 -->*/}
-                    <button className="btn close-btn">
-                        <i className="fa-solid fa-xmark"></i>
-                    </button>
+                    {searchInput !== ''? 
+                        <button className="btn close-btn" onClick={clearSearchInput}>
+                            <i className="fa-solid fa-xmark"></i>
+                        </button> : ''    
+                    }
 
                     <button className="btn" title="Please, select the search criteria">
                         <i className="fa-solid fa-magnifying-glass"></i>
@@ -28,11 +46,11 @@ export default function Search() {
                     <div className="filter">
                     <span>Search Criteria:</span>
                     <select name="criteria" className="criteria">
-                        <option defaultValue="">Not selected</option>
-                        <option defaultValue="">First Name</option>
-                        <option defaultValue="">Last Name</option>
-                        <option defaultValue="">Email</option>
-                        <option defaultValue="">Phone</option>
+                        <option value="not selected">Not selected</option>
+                        <option value="firstName">First Name</option>
+                        <option value="lastName">Last Name</option>
+                        <option value="email">Email</option>
+                        <option value="phoneNumber">Phone</option>
                     </select>
                     </div>
                 </form>

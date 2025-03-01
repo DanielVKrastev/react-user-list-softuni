@@ -16,6 +16,7 @@ export default function UserList() {
     const [editUserId, setEditUserId] = useState(null);
     const [userIdInfo, setUserIdInfo] = useState(null); // or undefiend
     const [userIdDelete, setUserIdDelete] = useState(null);
+    const [searchParams, setSearchParams] = useState([]);
 
     useEffect(() => {
         userService.getAll()
@@ -23,6 +24,30 @@ export default function UserList() {
                 setUsers(result);
             });
     }, []);
+
+    useEffect(() => {
+        if(! searchParams.search) {
+            userService.getAll()
+            .then(result => {
+                setUsers(result);
+            });
+            return;
+        }
+
+        userService.getAll()
+            .then(result => {
+                const search = searchParams.search;
+                const criteria = searchParams.criteria;
+                if(criteria === 'not selected') return;
+        
+                const filterUsers = result;
+
+                const findUser = filterUsers.filter(user => user[criteria].toLowerCase() === search.toLowerCase());
+        
+                setUsers(findUser);
+            });
+
+    }, [searchParams])
 
     const createUserClickHandler = () => {
         setShowCreate(true);
@@ -97,11 +122,22 @@ export default function UserList() {
         setShowCreate(false);
     };
 
+    const searchUserClickHandler = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const search = formData.get('search');
+        const criteria = formData.get('criteria');
+
+        setSearchParams({search, criteria});
+    };
+
     return(
         <>
             {/*<!-- Section component  -->*/}
     <section className="card users-container">
-        <Search />
+        <Search 
+            onSearch={searchUserClickHandler}
+        />
 
         {showCreate && 
             <UserCreate 

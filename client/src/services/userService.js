@@ -31,7 +31,7 @@ export default {
     async update(userId, userData){
         const updateData = transformUserData(userData, 'update');
         updateData._id = userId;
-
+        
         const user = await this.getOne(userId);
         const createdAt = user.createdAt;
         
