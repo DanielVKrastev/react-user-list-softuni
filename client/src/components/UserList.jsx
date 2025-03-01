@@ -9,6 +9,8 @@ import UserCreate from "./UserCreate";
 import UserInfo from "./UserInfo";
 import UserDelete from "./UserDelete";
 
+import { sortingUsers } from "../utils/sortingUsers";
+
 
 export default function UserList() {
     const [users, setUsers] = useState([]);
@@ -30,7 +32,9 @@ export default function UserList() {
         if(! searchParams.search) {
             userService.getAll()
             .then(result => {
-                setUsers(result);
+                const sortedResult = sortingUsers(result, sorting.sortName, sorting.sort);
+                
+                setUsers(sortedResult);    
             });
             return;
         }
@@ -40,15 +44,14 @@ export default function UserList() {
                 const search = searchParams.search;
                 const criteria = searchParams.criteria;
                 if(criteria === 'not selected') return;
-        
-                const filterUsers = result;
 
-                const findUser = filterUsers.filter(user => user[criteria].toLowerCase() === search.toLowerCase());
+                const findUser = result.filter(user => user[criteria].toLowerCase() === search.toLowerCase());
+                const sortedResult = sortingUsers(findUser, sorting.sortName, sorting.sort);
         
-                setUsers(findUser);
+                setUsers(sortedResult);
             });
 
-    }, [searchParams, sorting])
+    }, [searchParams, sorting]);
 
     const createUserClickHandler = () => {
         setShowCreate(true);
@@ -154,9 +157,6 @@ export default function UserList() {
             setSorting({sortName: sortName, sort: 'ASC'});
         }
     };
-
-    console.log(sorting);
-    
 
     return(
         <>
