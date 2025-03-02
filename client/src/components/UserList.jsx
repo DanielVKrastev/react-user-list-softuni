@@ -10,6 +10,7 @@ import UserInfo from "./UserInfo";
 import UserDelete from "./UserDelete";
 
 import { sortingUsers } from "../utils/sortingUsers";
+import { pagination } from "../utils/paginationUtils";
 
 
 export default function UserList() {
@@ -40,26 +41,7 @@ export default function UserList() {
             .then(result => {
                 const sortedResult = sortingUsers(result, sorting.sortName, sorting.sort);
 
-                
-                let numberSliceArray = sortedResult.length / itemsPerPage;
-                const slicesArraysResult = [];
-
-                let fromSlice =  sortedResult.length - itemsPerPage;
-                if(itemsPerPage > sortedResult.length){
-                    fromSlice =  0;
-                }
-                let toSlice = sortedResult.length;
-
-                
-                while(numberSliceArray > 0){
-                    let slicedArray = sortedResult.splice(fromSlice, toSlice);
-                    slicesArraysResult.push(slicedArray);
-
-                    fromSlice -= itemsPerPage;
-                    toSlice -= itemsPerPage;
-                    
-                    numberSliceArray--;
-                    };
+                const slicesArraysResult = pagination(sortedResult, itemsPerPage);
 
                 setPages(slicesArraysResult.length); //All pages
                 
@@ -77,7 +59,11 @@ export default function UserList() {
                 const findUser = result.filter(user => user[criteria].toLowerCase() === search.toLowerCase());
                 const sortedResult = sortingUsers(findUser, sorting.sortName, sorting.sort);
         
-                setUsers(sortedResult);
+                const slicesArraysResult = pagination(sortedResult, itemsPerPage);
+
+                setPages(slicesArraysResult.length); //All pages
+                
+                setUsers(slicesArraysResult[currentPage - 1]);    
             });
             
     }, [searchParams, sorting, itemsPerPage, currentPage]);
