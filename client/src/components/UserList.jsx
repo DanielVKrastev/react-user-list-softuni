@@ -20,21 +20,52 @@ export default function UserList() {
     const [userIdDelete, setUserIdDelete] = useState(null);
     const [searchParams, setSearchParams] = useState([]);
     const [sorting, setSorting] = useState({sortName: 'createdAt', sort: 'ASC'});
+    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [pages, setPages] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
 
+    /*
     useEffect(() => {
         userService.getAll()
             .then(result => {
                 setUsers(result);
             });
     }, []);
+    */
 
     useEffect(() => {
         if(! searchParams.search) {
+            console.log(itemsPerPage);
             userService.getAll()
             .then(result => {
                 const sortedResult = sortingUsers(result, sorting.sortName, sorting.sort);
+
                 
-                setUsers(sortedResult);    
+                let numberSliceArray = sortedResult.length / itemsPerPage;
+                const slicesArraysResult = [];
+
+                let fromSlice =  sortedResult.length - itemsPerPage;
+                if(itemsPerPage > sortedResult.length){
+                    fromSlice =  0;
+                }
+                let toSlice = sortedResult.length;
+
+                
+                while(numberSliceArray > 0){
+                    console.log(numberSliceArray);
+                    let slicedArray = sortedResult.splice(fromSlice, toSlice);
+                    slicesArraysResult.push(slicedArray);
+
+                    fromSlice -= itemsPerPage;
+                    toSlice -= itemsPerPage;
+                    
+                    numberSliceArray--;
+                    };
+                console.log(slicesArraysResult);
+               // console.log(sortedResult);
+                setPages(slicesArraysResult.length); //All pages
+                
+                setUsers(slicesArraysResult[currentPage - 1]);    
             });
             return;
         }
@@ -50,8 +81,8 @@ export default function UserList() {
         
                 setUsers(sortedResult);
             });
-
-    }, [searchParams, sorting]);
+            
+    }, [searchParams, sorting, itemsPerPage, currentPage]);
 
     const createUserClickHandler = () => {
         setShowCreate(true);
@@ -157,6 +188,17 @@ export default function UserList() {
             setSorting({sortName: sortName, sort: 'ASC'});
         }
     };
+
+    const setItemsPerPagePaginationHandler = (e) => {
+        setItemsPerPage(e.target.value);
+    };
+
+    const changeCurrentPageHandler = (page) => {
+        setCurrentPage(page);
+    };
+
+    console.log(pages);
+    
 
     return(
         <>
@@ -357,7 +399,12 @@ export default function UserList() {
         {/*<!-- New user button  -->*/}
         <button className="btn-add btn" onClick={createUserClickHandler}>Add new user</button>
 
-        <Pagination />
+        <Pagination 
+            pages={pages}
+            currentPage={currentPage}
+            onChangePage={changeCurrentPageHandler}
+            onSetItemsPerPage={setItemsPerPagePaginationHandler}
+        />
     </section>
         </>
     )
