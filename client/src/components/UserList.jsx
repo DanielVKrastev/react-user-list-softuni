@@ -35,7 +35,7 @@ export default function UserList() {
 
     useEffect(() => {
         if(! searchParams.search) {
-            console.log(itemsPerPage);
+
             userService.getAll()
             .then(result => {
                 const sortedResult = sortingUsers(result, sorting.sortName, sorting.sort);
@@ -52,7 +52,6 @@ export default function UserList() {
 
                 
                 while(numberSliceArray > 0){
-                    console.log(numberSliceArray);
                     let slicedArray = sortedResult.splice(fromSlice, toSlice);
                     slicesArraysResult.push(slicedArray);
 
@@ -61,8 +60,7 @@ export default function UserList() {
                     
                     numberSliceArray--;
                     };
-                console.log(slicesArraysResult);
-               // console.log(sortedResult);
+
                 setPages(slicesArraysResult.length); //All pages
                 
                 setUsers(slicesArraysResult[currentPage - 1]);    
@@ -195,10 +193,7 @@ export default function UserList() {
 
     const changeCurrentPageHandler = (page) => {
         setCurrentPage(page);
-    };
-
-    console.log(pages);
-    
+    };    
 
     return(
         <>
