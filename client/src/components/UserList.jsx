@@ -8,6 +8,7 @@ import UserListItem from "./UserListItem";
 import UserCreate from "./UserCreate";
 import UserInfo from "./UserInfo";
 import UserDelete from "./UserDelete";
+import Error from "./Error";
 
 import { sortingUsers } from "../utils/sortingUsers";
 import { pagination } from "../utils/paginationUtils";
@@ -24,6 +25,8 @@ export default function UserList() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [pages, setPages] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isPending, setIsPending] = useState(true); // for loading spinner
+    const [errorMessage, setErrorMessage] = useState(false); // for loading spinner
 
     /*
     useEffect(() => {
@@ -35,35 +38,59 @@ export default function UserList() {
     */
 
     useEffect(() => {
+        setIsPending(true);
+        setErrorMessage(false);
         if(! searchParams.search) {
 
             userService.getAll()
             .then(result => {
+                setIsPending(false);
                 const sortedResult = sortingUsers(result, sorting.sortName, sorting.sort);
 
-                const slicesArraysResult = pagination(sortedResult, itemsPerPage);
+                if(sortedResult.length !== 0){
+                    const slicesArraysResult = pagination(sortedResult, itemsPerPage);
 
-                setPages(slicesArraysResult.length); //All pages
-                
-                setUsers(slicesArraysResult[currentPage - 1]);    
+                    setPages(slicesArraysResult.length); //All pages
+                    
+                    setUsers(slicesArraysResult[currentPage - 1]);  
+                }else{
+                    setUsers([]);
+                    setErrorMessage("There is no users yet.");
+                }   
+            })
+            .catch(err => {
+                setIsPending(false);
+                setErrorMessage('Failed to fetch');
             });
             return;
         }
 
+        // Searching
         userService.getAll()
             .then(result => {
+                setIsPending(false);
                 const search = searchParams.search;
                 const criteria = searchParams.criteria;
                 if(criteria === 'not selected') return;
 
                 const findUser = result.filter(user => user[criteria].toLowerCase() === search.toLowerCase());
                 const sortedResult = sortingUsers(findUser, sorting.sortName, sorting.sort);
-        
-                const slicesArraysResult = pagination(sortedResult, itemsPerPage);
 
-                setPages(slicesArraysResult.length); //All pages
-                
-                setUsers(slicesArraysResult[currentPage - 1]);    
+                if(sortedResult.length !== 0){
+                    const slicesArraysResult = pagination(sortedResult, itemsPerPage);
+
+                    setPages(slicesArraysResult.length); //All pages
+                    
+                    setUsers(slicesArraysResult[currentPage - 1]);  
+                }else{
+                    setUsers([]);
+                    setErrorMessage("Sorry, we couldn't find what you're looking for.");
+                }
+  
+            })
+            .catch(err => {
+                setIsPending(false);
+                setErrorMessage('Failed to fetch');
             });
             
     }, [searchParams, sorting, itemsPerPage, currentPage]);
@@ -211,57 +238,16 @@ export default function UserList() {
 
         {/*<!-- Table component -->*/}
         <div className="table-wrapper">
-            <div>
             {/*<!-- Overlap components  -->*/}
 
-            {/*<!-- <div className="loading-shade"> -->*/}
-            {/*<!-- Loading spinner  -->*/}
-            {/*<!-- <div className="spinner"></div> -->*/}
+            {isPending || errorMessage? <div className="loading-shade">
+                {/*<!-- Loading spinner  -->*/}
+                {isPending && <div className="spinner"></div>}
 
-
-            {/*<!-- No content overlap component  -->*/}
-
-            {/*<!-- <div className="table-overlap">
-                <svg
-                    aria-hidden="true"
-                    focusable="false"
-                    data-prefix="fas"
-                    data-icon="triangle-exclamation"
-                    className="svg-inline--fa fa-triangle-exclamation Table_icon__+HHgn"
-                    role="img"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                >
-                    <path
-                    fill="currentColor"
-                    d="M506.3 417l-213.3-364c-16.33-28-57.54-28-73.98 0l-213.2 364C-10.59 444.9 9.849 480 42.74 480h426.6C502.1 480 522.6 445 506.3 417zM232 168c0-13.25 10.75-24 24-24S280 154.8 280 168v128c0 13.25-10.75 24-23.1 24S232 309.3 232 296V168zM256 416c-17.36 0-31.44-14.08-31.44-31.44c0-17.36 14.07-31.44 31.44-31.44s31.44 14.08 31.44 31.44C287.4 401.9 273.4 416 256 416z"
-                    ></path>
-                </svg>
-                <h2>Sorry, we couldn't find what you're looking for.</h2>
-                </div> -->*/}
-
-            {/*<!-- On error overlap component  -->*/}
-
-            {/*<!-- <div className="table-overlap">
-                <svg
-                    aria-hidden="true"
-                    focusable="false"
-                    data-prefix="fas"
-                    data-icon="triangle-exclamation"
-                    className="svg-inline--fa fa-triangle-exclamation Table_icon__+HHgn"
-                    role="img"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                >
-                    <path
-                    fill="currentColor"
-                    d="M506.3 417l-213.3-364c-16.33-28-57.54-28-73.98 0l-213.2 364C-10.59 444.9 9.849 480 42.74 480h426.6C502.1 480 522.6 445 506.3 417zM232 168c0-13.25 10.75-24 24-24S280 154.8 280 168v128c0 13.25-10.75 24-23.1 24S232 309.3 232 296V168zM256 416c-17.36 0-31.44-14.08-31.44-31.44c0-17.36 14.07-31.44 31.44-31.44s31.44 14.08 31.44 31.44C287.4 401.9 273.4 416 256 416z"
-                    ></path>
-                </svg>
-                <h2>Failed to fetch</h2>
-                </div> -->*/}
-            {/*<!-- </div> -->*/}
+                {errorMessage && <Error errorMessage={errorMessage}/> }
             </div>
+            : 
+            ''}
 
             <table className="table">
             <thead>
